@@ -9,12 +9,7 @@ const Sidebar = () => {
         <li className="nav-item">
           <Link className="nav-link" to="/admin/create-event">Create Event</Link>
         </li>
-        <li className="nav-item">
-          <Link className="nav-link" to="/admin/manage-slots">Manage Slots</Link>
-        </li>
-        <li className="nav-item">
-          <Link className="nav-link" to="/admin/manage-payments">Manage Payments</Link>
-        </li>
+       
       </ul>
     </div>
   );

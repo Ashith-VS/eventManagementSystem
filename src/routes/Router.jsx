@@ -8,8 +8,7 @@ import Contact from "../components/Contact";
 import MoreDetails from "../pages/Moredetails";
 import AdminDashboard from "../pages/AdminDashboard";
 import CreateEvent from "../pages/CreateEvent";
-import ManageSlots from "../pages/ManageSlots";
-import ManagePayments from "../pages/ManagePayments";
+
 
 const Router = () => {
   return (
@@ -23,8 +22,7 @@ const Router = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminDashboard/>}/>
         <Route path="/admin/create-event" element={<CreateEvent/>}/>
-        <Route path="/admin/manage-slots" element={<ManageSlots/>}/>
-        <Route path="/admin/manage-payments" element={<ManagePayments/>}/>
+       
 
       </Routes>
     </BrowserRouter>
