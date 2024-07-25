@@ -43,13 +43,12 @@ export const GetEvents = () => {
   };
 
 
-  export const CurrentUserAuth = (id = "") => {
-    
+  export const CurrentUserAuth = (id) => {
+    localStorage.setItem("currentUser", JSON.stringify(id));
     return async (dispatch) => {
         try {
             const res = await getDoc(doc(db, "users", id))
-            console.log('res: ', res?.data());
-            dispatch({ type: CURRENT_USER, payload: res?.data() });
+            dispatch({ type: CURRENT_USER, payload: res?.data()||{} });
         } catch (error) {
             console.error(error);
         }

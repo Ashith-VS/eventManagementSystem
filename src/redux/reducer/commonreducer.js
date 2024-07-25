@@ -1,8 +1,7 @@
 import { CURRENT_USER,GET_EVENTS } from "../../common/constant"
 
 const initialState = {
-    admin: [],
-    currentUser: JSON.parse(localStorage.getItem("currentUser")) || [],
+    currentUser: JSON.parse(localStorage.getItem("currentUser")) || {},
     getUser: [],
   };
 

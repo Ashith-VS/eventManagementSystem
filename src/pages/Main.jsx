@@ -15,7 +15,7 @@ const {getUser} =useSelector((state)=>state.Reducers)
   return (
     <div className="App">
       <Navbar />
-      <section className="d-flex justify-content-center align-items-center gradient-form" style={{ height: "100vh" }}>
+      <section className="d-flex justify-content-center align-items-center gradient-form" >
         <div className="container py-5">
           <div className="row justify-content-center align-items-center">
             <div className="col-md-12">
