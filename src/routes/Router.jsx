@@ -7,23 +7,24 @@ import About from "../components/About";
 import Contact from "../components/Contact";
 import MoreDetails from "../pages/Moredetails";
 import AdminDashboard from "../pages/AdminDashboard";
-import CreateEvent from "../pages/CreateEvent";
-
+import ParticipatedEvents from "../pages/ParticipatedEvents";
+import AdminAllEvents from "../pages/AdminAllEvents";
 
 const Router = () => {
+  
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Main/>}/>
         <Route path="/event/:id" element={<MoreDetails/>}/>
+        <Route path="/participatedEvents" element={<ParticipatedEvents/>}/>
         <Route path="/about" element={<About/>}/>
         <Route path="/contact" element={<Contact/>}/>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<AdminDashboard/>}/>
-        <Route path="/admin/create-event" element={<CreateEvent/>}/>
-       
-
+        <Route path="/admin/all-event" element={<AdminAllEvents/>}/>
+        <Route path="/admin/edit-event/:id" element={<AdminDashboard/>}/>
       </Routes>
     </BrowserRouter>
   );

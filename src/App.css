@@ -11,7 +11,7 @@
 }
 .gradient{
   padding: 30px;
-  background: linear-gradient(to right, #9191a0, #031622);
+  background: linear-gradient(to right, #9191a0, #8d9396);
 }
 
 .navbar-custom .nav-link,
@@ -22,4 +22,12 @@
 .navbar-custom .nav-link:hover,
 .navbar-custom .navbar-brand:hover {
   color: #ddd;
+}
+
+
+.img {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  object-fit: cover;
 }

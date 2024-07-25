@@ -1,10 +1,26 @@
 import React from 'react'
 import Router from './routes/Router'
 import './App.css';
+import 'react-toastify/dist/ReactToastify.css';
+import { Slide, ToastContainer } from 'react-toastify';
 
 const App = () => {
   return (
+    <>
    <Router/>
+   <ToastContainer 
+    position="top-center"
+    autoClose={2000}
+    hideProgressBar
+    newestOnTop
+    closeOnClick
+    rtl={false}
+    pauseOnFocusLoss
+    draggable
+    pauseOnHover
+    theme="dark"
+    transition={Slide}
+/></>
   )
 }
 

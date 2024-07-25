@@ -1,18 +1,22 @@
 import { isEmpty } from 'lodash';
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { CreateUserAuth } from '../redux/action/commonAction';
 
 const Register = () => {
+  const uid=Date.now().toString()
+  const navigate=useNavigate()
+  const dispatch=useDispatch()
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    id: Date.now().toString(),
     name: "",
     email: "",
     mobile: "",
     password: "",
-    role: "",
-    image: "",
+    role: "user",
   });
+
   const handleChange = (e) => {
     const { name, value, type, id } = e.target;
     const numericValue = value.replace(/\D/g, "");
@@ -91,15 +95,14 @@ const Register = () => {
       return error;
     }
 
-    const handleSubmit=(e)=>{
+    const handleSubmit=async(e)=>{
       e.preventDefault()
       const valid = handleValidation()
-      setErrors(valid)
-      if(isEmpty(valid)){
-
+      if(!isEmpty(valid)){
+        setErrors(valid)
+      }else{
+       await dispatch(CreateUserAuth(formData,navigate))
       }
-
-      console.log('valid: ', valid);
     }
 
 

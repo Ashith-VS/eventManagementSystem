@@ -1,20 +1,50 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import Modal from "react-modal";
+import { toast} from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetEvents } from '../redux/action/commonAction';
+
 
 const MoreDetails = () => {
   const { id } = useParams();
+  const navigate =useNavigate();
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [Isparticipate, setIsparticipate] = useState(false)
   
-  const events = [
-    { id: 1, name: 'Event 1', description: 'Description for event 1', date: '2023-08-01', details: 'Detailed information about Event 1' },
-    { id: 2, name: 'Event 2', description: 'Description for event 2', date: '2023-09-15', details: 'Detailed information about Event 2' },
-    { id: 3, name: 'Event 3', description: 'Description for event 3', date: '2023-10-01', details: 'Detailed information about Event 3' },
-    { id: 4, name: 'Event 4', description: 'Description for event 4', date: '2023-11-15', details: 'Detailed information about Event 4' },
-    { id: 5, name: 'Event 5', description: 'Description for event 5', date: '2023-12-01', details: 'Detailed information about Event 5' },
-    { id: 6, name: 'Event 6', description: 'Description for event 6', date: '2024-01-15', details: 'Detailed information about Event 6' },
-  ];
+  const dispatch=useDispatch()
+  const {getUser} =useSelector((state)=>state.Reducers)
 
-  const event = events.find(event => event.id === parseInt(id));
+  useEffect(() => {
+    dispatch(GetEvents())
+    }, [])
+  
+  const event = getUser.find(event => event.id === id);
+ 
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+    },
+  };
+  const handleAttend = () => {
+    toast.success('Participate successfully');
+    setIsparticipate(true);
+    setModalIsOpen(false);
+  }
+
+  const handleModal = () => {
+    if(Isparticipate){
+     navigate('/participatedEvents')
+    }else{
+    setModalIsOpen(true);
+  }
+  };
 
   return (
     <div className="App">
@@ -30,12 +60,13 @@ const MoreDetails = () => {
                       <div className="text-center">
                         <h4 className="mt-1 mb-5 pb-1">{event.name}</h4>
                       </div>
-                      <div>
-                        <p>{event.details}</p>
-                        <p><strong>Date:</strong> {event.date}</p>
-                        <p><strong>Description:</strong> {event.description}</p>
-                        <button className="d-flex justify-content-center btn btn-primary">book now</button>
-                      </div>
+                      <p><strong>Event On :</strong> {event.date}</p>
+                      <p><strong>Timings : </strong> {event.startTime} - {event.endTime}</p>
+                      <p><strong>Venue : </strong>{event.venue}</p>
+                      <p><strong>Participant Limit : </strong> {event.participantLimit}</p>
+                      <p><strong>Organizer : </strong> {event.description}</p>
+                      <p><strong>Description : </strong> {event.details || 'No additional details provided.'}</p>
+                      <button className="d-flex justify-content-center btn btn-primary" onClick={handleModal}>{Isparticipate?"View Ticket":"Book Now"}</button>
                     </>
                   ) : (
                     <div className="text-center">
@@ -48,6 +79,18 @@ const MoreDetails = () => {
           </div>
         </div>
       </section>
+                 <Modal isOpen={modalIsOpen} style={customStyles} onRequestClose={()=>setModalIsOpen(false)}>
+                      <div className="modal-content align-items-center justify-content-center">
+                        <div className="modal-body text-center">
+                          <h5 className="modal-title mb-4 ">Conformation</h5>
+                          <p>Are you sure you want to attend this event?</p>
+                          <div className="modal-footer mt-3">
+                            <button className="btn btn-secondary mx-2" onClick={()=>setModalIsOpen(false)}>cancel</button>
+                            <button className="btn btn-primary mx-2"onClick={handleAttend}>Attend</button>
+                          </div>
+                        </div>
+                      </div>
+      </Modal>
     </div>
   );
 };

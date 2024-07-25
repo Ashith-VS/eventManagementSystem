@@ -1,8 +1,12 @@
 import { isEmpty } from 'lodash';
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { LoggedUserAuth} from '../redux/action/commonAction';
 
 const Login = () => {
+const dispatch=useDispatch()
+const navigate=useNavigate()
 const [errors, setErrors] = useState({});
 const [formData, setFormData] = useState({
   email: "",
@@ -68,12 +72,13 @@ const handleValidation = () => {
   return error;
 };
 
-const handleSubmit = (e) => {
+const handleSubmit = async(e) => {
 e.preventDefault()
 const valid =handleValidation()
-setErrors(valid)
-if(isEmpty(valid)){
-  console.log('formData: ', formData);
+if(!isEmpty(valid)){
+  setErrors(valid)
+}else{
+ await dispatch(LoggedUserAuth(formData,navigate))
 }
 }
 
