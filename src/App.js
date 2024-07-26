@@ -3,6 +3,8 @@ import Router from './routes/Router'
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { Slide, ToastContainer } from 'react-toastify';
+import Modal from 'react-modal';
+Modal.setAppElement('#root');
 
 const App = () => {
   return (

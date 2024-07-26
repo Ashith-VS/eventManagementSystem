@@ -5,15 +5,18 @@ import Modal from "react-modal";
 import { toast} from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetEvents } from '../redux/action/commonAction';
-
+import { isEmpty } from 'lodash';
+import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
+import { db } from '../servies/firebase';
 
 const MoreDetails = () => {
+  const [ticket,setTicket]=useState(0)
+  const {currentUser}=useSelector((state)=>state.Reducers)
   const { id } = useParams();
   const navigate =useNavigate();
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [Isparticipate, setIsparticipate] = useState(false)
-  
   const dispatch=useDispatch()
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const {getUser} =useSelector((state)=>state.Reducers)
 
   useEffect(() => {
@@ -32,19 +35,51 @@ const MoreDetails = () => {
       transform: "translate(-50%, -50%)",
     },
   };
-  const handleAttend = () => {
-    toast.success('Participate successfully');
-    setIsparticipate(true);
-    setModalIsOpen(false);
+  const handleAttend = async() => {
+    if(!isEmpty(currentUser)){
+      setModalIsOpen(false)
+      setModalOpen(true);
+    }else{
+      toast.error('Please login to attend event');
+    }
   }
 
   const handleModal = () => {
-    if(Isparticipate){
-     navigate('/participatedEvents')
+    if(event?.AvailableTickets<=0){
+      toast.error('Tickets sold out');
     }else{
     setModalIsOpen(true);
   }
-  };
+};
+
+  const handleBookTicket=async()=>{
+    if(ticket>0&&ticket<8){
+      if (ticket <= event.AvailableTickets) {
+        try {
+          await updateDoc(doc(db,"events",event.id),{...event,AvailableTickets:event.AvailableTickets-ticket})
+          await dispatch(GetEvents())
+          await updateDoc(doc(db,"users",currentUser?.id),{ticketsBooked:arrayUnion({...event,ticketBooked:ticket})})
+          toast.success('Tickets booked successfully');
+          setModalOpen(false)
+          navigate('/')
+          setTicket(0)
+        } catch (error) {
+          console.error(error)
+        }
+      } else {
+        toast.error('Tickets are not available');
+    }
+  }else{
+    toast.error('Please select a ticket between 1 and 8');
+  }
+}
+
+const handleTickets = (e) => {
+  const { name, value,} = e.target;
+  const numericValue = parseInt(value.replace(/\D/g, ""), 10);
+  setTicket(numericValue > 0 ? numericValue : 0);
+}
+
 
   return (
     <div className="App">
@@ -64,9 +99,10 @@ const MoreDetails = () => {
                       <p><strong>Timings : </strong> {event.startTime} - {event.endTime}</p>
                       <p><strong>Venue : </strong>{event.venue}</p>
                       <p><strong>Participant Limit : </strong> {event.participantLimit}</p>
+                      <p><strong>Available tickets : </strong>{event?.AvailableTickets}</p>
                       <p><strong>Organizer : </strong> {event.description}</p>
                       <p><strong>Description : </strong> {event.details || 'No additional details provided.'}</p>
-                      <button className="d-flex justify-content-center btn btn-primary" onClick={handleModal}>{Isparticipate?"View Ticket":"Book Now"}</button>
+                      <button className="d-flex justify-content-center btn btn-primary" onClick={handleModal} disabled={event?.AvailableTickets<=0}>Book Now</button>
                     </>
                   ) : (
                     <div className="text-center">
@@ -79,6 +115,23 @@ const MoreDetails = () => {
           </div>
         </div>
       </section>
+      <Modal isOpen={modalOpen} style={customStyles} onRequestClose={()=>{setModalOpen(false)
+         setTicket(0)}
+      }>
+                      <div className="modal-content align-items-center justify-content-center">
+                        <div className="modal-body text-center">
+                          <h5 className="modal-title mb-4 ">Tickets</h5>
+                          <p>Choose the number of tickets you want to book</p>
+                          <input type="text" className='form-control' onChange={handleTickets} value={ticket} name='ticket'/>
+                          <div className="modal-footer mt-3">
+                            <button className="btn btn-secondary mx-2" onClick={()=>{setModalOpen(false)
+                              setTicket(0)
+                            }}>cancel</button>
+                            <button className="btn btn-primary mx-2"onClick={handleBookTicket}>Book ticket</button>
+                          </div>
+                        </div>
+                      </div>
+      </Modal>
                  <Modal isOpen={modalIsOpen} style={customStyles} onRequestClose={()=>setModalIsOpen(false)}>
                       <div className="modal-content align-items-center justify-content-center">
                         <div className="modal-body text-center">
@@ -91,6 +144,7 @@ const MoreDetails = () => {
                         </div>
                       </div>
       </Modal>
+                
     </div>
   );
 };

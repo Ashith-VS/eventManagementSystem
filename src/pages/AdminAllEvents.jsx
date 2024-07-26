@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect} from 'react'
 import Sidebar from '../components/Sidebar'
-import { collection, getDocs } from 'firebase/firestore'
-import { db } from '../servies/firebase'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { GetEvents } from '../redux/action/commonAction'
 
 const AdminAllEvents = () => {
-    const dispatch=useDispatch()
-    const {getUser} =useSelector((state)=>state.Reducers)
- const navigate =useNavigate()
+const dispatch=useDispatch()
+const navigate =useNavigate()
+const {getUser} =useSelector((state)=>state.Reducers)
 
-   
 useEffect(() => {
     dispatch(GetEvents())
 }, [])
@@ -19,7 +16,6 @@ useEffect(() => {
 const handleEdit = (id) =>{
     navigate(`/admin/edit-event/${id}`)
 }
-
 
   return (
     <div className="d-flex">
@@ -35,6 +31,7 @@ const handleEdit = (id) =>{
               <th>Time</th>
               <th>Venue</th>
               <th>Participant Limit</th>
+              <th>Booked Tickets</th>
               <th>Price</th>
               <th>Action</th>
             </tr>
@@ -48,6 +45,7 @@ const handleEdit = (id) =>{
                 <td>{event.startTime}-{event.endTime}</td>
                 <td>{event.venue}</td>
                 <td>{event.participantLimit}</td>
+                <td>{event.participantLimit-event.AvailableTickets}</td> 
                 <td>{event.price === "0" ? "Free" : `$${event.price}`}</td>
                 <td><button className="btn btn-primary"onClick={() => handleEdit(event.id)}>Edit</button></td>
               </tr>

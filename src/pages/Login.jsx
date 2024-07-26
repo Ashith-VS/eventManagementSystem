@@ -1,10 +1,12 @@
 import { isEmpty } from 'lodash';
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { LoggedUserAuth} from '../redux/action/commonAction';
+import { AUTH_FAILURE } from '../common/constant';
 
 const Login = () => {
+  const {AuthFailure}=useSelector((state)=>state.Reducers)
 const dispatch=useDispatch()
 const navigate=useNavigate()
 const [errors, setErrors] = useState({});
@@ -17,6 +19,7 @@ const handleChange = (e) => {
   const { name, value } = e.target;
   setFormData({ ...formData, [name]: value });
   setErrors({ ...errors, [name]: "" });
+  dispatch({type:AUTH_FAILURE,payload:false})
 };
 
 const inputs = [
@@ -97,6 +100,11 @@ if(!isEmpty(valid)){
                         {value}
                       </li>
                     ))}
+                  </div>
+                )}
+                 {AuthFailure && (
+                  <div className="text-center">
+                    <span style={{ color: "red" }}>{AuthFailure}</span>
                   </div>
                 )}
                 <h4 className="mt-1 mb-5 pb-1">Login</h4>

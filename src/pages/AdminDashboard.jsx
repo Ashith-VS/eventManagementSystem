@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import { isEmpty } from 'lodash';
-import { addDoc, collection, doc, getDoc, setDoc, updateDoc} from 'firebase/firestore';
+import {doc,setDoc, updateDoc} from 'firebase/firestore';
 import { db } from '../servies/firebase';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -22,7 +22,8 @@ const AdminDashboard = () => {
     endTime: "",
     price: "",
     venue:"",
-    participantLimit:0
+    participantLimit:0,
+    AvailableTickets:0
   });
   const filteredEvents = getUser.find((event) => event.id === id)
  
@@ -37,7 +38,8 @@ const AdminDashboard = () => {
     endTime: filteredEvents.endTime,
     price: filteredEvents.price,
     venue: filteredEvents.venue,
-    participantLimit: filteredEvents.participantLimit
+    participantLimit: filteredEvents.participantLimit,
+    AvailableTickets: filteredEvents.AvailableTickets
     })
  }
 }, [id])
@@ -63,6 +65,7 @@ const AdminDashboard = () => {
     } else {
       try {
         await setDoc(doc(db, "events",uid), {...events,id:uid});
+        console.log('events: ', events);
         toast.success('Event successfully created!');
          // Reset the form
          setEvents({
@@ -74,7 +77,8 @@ const AdminDashboard = () => {
           endTime: "",
           price: "",
           venue:"",
-          participantLimit:0
+          participantLimit:0,
+          AvailableTickets:0
         });
         setError({});
       } catch (error) {
@@ -208,8 +212,8 @@ const AdminDashboard = () => {
               className="form-control"
               id="price"
               value={events.participantLimit}
-              onChange={(e) =>{ setEvents({ ...events, participantLimit: e.target.value })
-             setError({...error, participantLimit: ""})}}
+              onChange={(e) =>{ setEvents({ ...events, participantLimit: e.target.value,AvailableTickets: e.target.value})
+             setError({...error, participantLimit: "", AvailableTickets:""})}}
             />
           </div>
 

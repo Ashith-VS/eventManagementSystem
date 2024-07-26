@@ -1,10 +1,12 @@
 import { isEmpty } from 'lodash';
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { CreateUserAuth } from '../redux/action/commonAction';
+import { AUTH_FAILURE } from '../common/constant';
 
 const Register = () => {
+  const {AuthFailure}=useSelector((state)=>state.Reducers)
   const uid=Date.now().toString()
   const navigate=useNavigate()
   const dispatch=useDispatch()
@@ -24,6 +26,8 @@ const Register = () => {
       ? setFormData({ ...formData, [name]: numericValue })
       : setFormData({ ...formData, [name]: type === "radio" ? id : value });
     setErrors({ ...errors, [name]: "" });
+  dispatch({type:AUTH_FAILURE,payload:false})
+
   };
 
   const renderedInputs = (item) => {
@@ -123,10 +127,15 @@ const Register = () => {
                     ))}
                   </div>
                 )}
+                {AuthFailure && (
+                  <div className="text-center">
+                    <span style={{ color: "red" }}>{AuthFailure}</span>
+                  </div>
+                )}
                 <h4 className="mt-1 mb-5 pb-1">Register</h4>
               </div>
               <form onSubmit={handleSubmit}>
-                {inputs.map((item, i) => renderedInputs(item, i))}
+              {inputs.map((item, i) => renderedInputs(item, i))}
                 <div className="d-flex justify-content-end ">
                   <button className="btn btn-primary mb-3" type="submit">Submit</button>
                 </div>

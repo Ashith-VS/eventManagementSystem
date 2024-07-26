@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Modal from 'react-modal'
+import { useSelector } from 'react-redux'
 
 const ParticipatedEvents = () => {
-    const [modalIsOpen, setModalIsOpen] = useState(false);
+  const {currentUser}=useSelector((state)=>state.Reducers)
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState(null);
+
     const customStyles = {
         content: {
           top: "50%",
@@ -14,8 +18,8 @@ const ParticipatedEvents = () => {
           transform: "translate(-50%, -50%)",
         },
       };
-    const handleViewClick = (ticket) => {
-        // setSelectedTicket(ticket);
+      const handleViewClick = (ticket) => {
+        setSelectedTicket(ticket);
         setModalIsOpen(true);
       };
 
@@ -32,30 +36,35 @@ const ParticipatedEvents = () => {
                         <span>Events you've</span>
                       <h4 className="mt-1 mb-5 pb-1">Participated</h4>
                     </div>
-                    <div>
+                    
+                    {currentUser?.ticketsBooked?(<div>
       <table className="table">
         <thead>
           <tr>
-            <th>Booked On</th>
-            <th>Event Name</th>
-            <th>Event Date</th>
-            <th>Tickets</th>
+            <th> Name</th>
+            <th>Venue</th>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Tickets Booked</th>
           </tr>
         </thead>
         <tbody>
-            <tr key={"payment.id"}>
-              <td>{"payment.id"}</td>
-              <td>{"payment.event"}</td>
-              <td>${"payment.amount"}</td>
-              <td><button  className="btn btn-primary" onClick={() => handleViewClick("event")}>view</button></td>
-            </tr>
+          {currentUser?.ticketsBooked?.map((ticket, i) => (
+            <tr key={`${ticket?.id}_${i}`}>
+              <td>{ticket?.name}</td>
+              <td>{ticket?.venue}</td>
+              <td>{ticket?.date}</td>
+              <td>{ticket?.price}</td>
+              <td>{ticket?.ticketBooked}</td>
+              <td><button  className="btn btn-primary" onClick={() => handleViewClick(ticket)}>view</button></td>
+            </tr>))}
         </tbody>
       </table>
-    </div> 
-    {/* <div className="text-center">
+    </div> )
+    :(<div className="text-center">
                       <h4 className="mt-1 mb-5 pb-1">No Events have been Participated</h4>
-                    </div> */}
-                   
+                    </div>
+                  )}
               </div>
             </div>
           </div>
@@ -65,15 +74,13 @@ const ParticipatedEvents = () => {
     <Modal isOpen={modalIsOpen} style={customStyles} onRequestClose={()=>setModalIsOpen(false)}>
                       <div className="modal-content align-items-center justify-content-center">
                         <div className="modal-body text-center m-5 ">
-                       
-      <h3 className='mb-4'>Ticket Details</h3>
-      <p><strong>Booked On:</strong> {"ticket.bookedOn"}</p>
-      <p><strong>Event Name:</strong> {"ticket.eventName"}</p>
-      <p><strong>Event Date:</strong> {"ticket.eventDate"}</p>
-      <p><strong>Tickets:</strong> 4</p>
-                          <div className="modal-footer ">
+                        <h3 className="mb-4">Ticket Details</h3>
+                <p><strong>Event Name:</strong> {selectedTicket?.name}</p>
+                <p><strong>Date:</strong> {selectedTicket?.date}</p>
+                <p><strong>Venue:</strong> {selectedTicket?.venue}</p>
+                <p><strong>Tickets:</strong> {selectedTicket?.ticketBooked}</p>
+                   <div className="modal-footer ">
                             <button className="btn btn-secondary mx-2" onClick={()=>setModalIsOpen(false)}>close</button>
-                           
                           </div>
                         </div>
                       </div>

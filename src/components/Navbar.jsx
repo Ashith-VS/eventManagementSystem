@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import profileIcon from "../assets/images/profile.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,16 +10,16 @@ import { CURRENT_USER } from "../common/constant";
 
 const Navbar = () => {
   const { currentUser } = useSelector((state) => state.Reducers);
-  // console.log("currentUser: ", currentUser);
+  const [showDropdown, setShowDropdown] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
-      onAuthStateChanged(auth, (user) => {
-        if (user?.uid) {
-          dispatch(CurrentUserAuth(user.uid));
-        }
-      });
+   onAuthStateChanged(auth, (user) => {
+      if (user?.uid) {
+        dispatch(CurrentUserAuth(user.uid));
+      }
+    });
   }, []);
 
   const handleLogout = () => {
@@ -27,6 +27,38 @@ const Navbar = () => {
     localStorage.clear();
     dispatch({ type: CURRENT_USER, payload: {} });
     navigate("/");
+    setShowDropdown(false);
+  };
+
+  const renderDropdownItems = () => {
+    if (isEmpty(currentUser)) {
+      return (
+        <button
+          className="dropdown-item"
+          onClick={() => navigate("/login")}
+        >
+          Login
+        </button>
+      );
+    }
+
+    if (currentUser?.role === 'user') {
+      return (
+        <>
+          <span className="dropdown-item">{currentUser.name}</span>
+          <button className="dropdown-item" onClick={() => navigate('/bookedEvents')}>Booked tickets</button>
+          <button className="dropdown-item" onClick={handleLogout}>Logout</button>
+        </>
+      );
+    }
+
+    if (currentUser?.role === 'admin') {
+      return (
+        <button className="dropdown-item" onClick={handleLogout}>Logout</button>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -63,28 +95,29 @@ const Navbar = () => {
                 Contact
               </Link>
             </li>
-            {!isEmpty(currentUser) && (
-              <div style={{ position: "relative", display: "inline-block" }}>
-                <img
-                  src={profileIcon}
-                  alt=""
-                  className="img"
-                  style={{ cursor: "pointer" }}
-                />
-                <span style={{ color: "white" }}>{currentUser.name}</span>
-              </div>
+
+            <li className="nav-item">
+              <img
+                src={profileIcon}
+                alt="Profile"
+                className="img"
+                onClick={() => setShowDropdown(!showDropdown)}
+                style={{ cursor: "pointer" }}
+              />
+            </li>
+            
+            {currentUser && currentUser.role === 'admin' && (
+              <li className="nav-item d-flex">
+                <Link className="nav-link" to="/admin">
+                  Admin
+                </Link>
+              </li>
             )}
-            {!isEmpty(currentUser) ? (
-              <button className="dropdown-item" onClick={handleLogout}>
-                Logout
-              </button>
-            ) : (
-              <button
-                className="dropdown-item"
-                onClick={() => navigate("/login")}
-              >
-                Login
-              </button>
+
+            {showDropdown && (
+              <div className="dropdown-menu dropdown-menu-right show" style={{ position: "relative" }}>
+                {renderDropdownItems()}
+              </div>
             )}
           </ul>
         </div>
