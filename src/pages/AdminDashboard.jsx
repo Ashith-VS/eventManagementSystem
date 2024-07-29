@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../components/Sidebar';
 import { isEmpty } from 'lodash';
-import {doc,setDoc, updateDoc} from 'firebase/firestore';
+import {doc,getDoc,setDoc, updateDoc} from 'firebase/firestore';
 import { db, storage } from '../servies/firebase';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -113,14 +113,20 @@ const AdminDashboard = () => {
       setError(formErrors);
     } else {
       let imageUrls = [];
-        if (events?.image && events?.image.length > 0) {
-          imageUrls = await handleImageUpload(events?.image);
-        }
       if(events.id){
-      const eventRef = doc(db, 'events',events.id);
-      // await updateDoc(eventRef, events);
-      await updateDoc(eventRef, { ...events,image: imageUrls });
-      toast.success('Event updated successfully!');
+        const eventRef = doc(db, 'events', events.id);
+        const eventSnapshot = await getDoc(eventRef);
+        const existingImages = eventSnapshot.data()?.image || [];
+        // Upload new images and combine with existing images
+        if (events?.image && events?.image.length > 0) {
+          const newImages = await handleImageUpload(events?.image);
+          imageUrls = [...existingImages, ...newImages];
+        } else {
+          imageUrls = existingImages; // No new images, use existing
+        }
+        // Update Firestore with combined image URLs
+        await updateDoc(eventRef, { ...events, image: imageUrls });
+        toast.success('Event updated successfully!');
      }
     }
   }
