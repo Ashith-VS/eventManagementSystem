@@ -85,6 +85,8 @@ const Navbar = () => {
                 Home
               </Link>
             </li>
+            {(currentUser.role !== "admin")&&
+            <>
             <li className="nav-item">
               <Link className="nav-link" to="/about">
                 About
@@ -94,7 +96,7 @@ const Navbar = () => {
               <Link className="nav-link" to="/contact">
                 Contact
               </Link>
-            </li>
+            </li></>}
 
             <li className="nav-item">
               <img
@@ -108,7 +110,7 @@ const Navbar = () => {
             
             {currentUser && currentUser.role === 'admin' && (
               <li className="nav-item d-flex">
-                <Link className="nav-link" to="/admin">
+                <Link className="nav-link" to="/dashboard">
                   Admin
                 </Link>
               </li>

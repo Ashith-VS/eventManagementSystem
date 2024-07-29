@@ -4,17 +4,19 @@ import { useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 
 const PrivateRoute = ({ role }) => {
-    const { currentUser } = useSelector((state) => state.Reducers);
+    // console.log('role: ', role);
+    const { currentUser, AuthSuccess } = useSelector((state) => state.Reducers);
+    // console.log('currentUser: ', currentUser, "AuthSuccess", AuthSuccess);
 
-    if(isEmpty(currentUser)){
-        return <Navigate to={'/login'} />;
+    if (isEmpty(currentUser)) {
+        return <Navigate to={'/'} />;
     }
 
     if (role && currentUser.role !== role) {
         return <Navigate to={'/'} />;
     }
 
-    return !isEmpty(currentUser) ? <Outlet /> : <Navigate to="/login" />;
+    return <Outlet />;
 }
 
 export default PrivateRoute

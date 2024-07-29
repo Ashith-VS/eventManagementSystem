@@ -32,7 +32,6 @@ export const CreateUserAuth = (user, navigate) => {
 }
 
 export const LoggedUserAuth = (user, navigate) => {
-
     return async (dispatch) => {
         try {
             const res = await signInWithEmailAndPassword(auth, user.email, user.password)
@@ -42,9 +41,8 @@ export const LoggedUserAuth = (user, navigate) => {
                 role: await fetchUserRole(res.user.uid) // Fetch the role from your user data source
             };
             dispatch({ type: AUTH_SUCCESS, payload: userDoc });
-
             if (userDoc.role === 'admin') {
-                navigate('/admin');
+                navigate('/dashboard');
             } else {
                 navigate('/');
             }

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Navbar from '../components/Navbar';
 import Modal from "react-modal";
 import { toast} from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +7,7 @@ import { GetEvents } from '../redux/action/commonAction';
 import { isEmpty } from 'lodash';
 import { arrayUnion, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../servies/firebase';
+import Slider from 'react-slick';
 
 const MoreDetails = () => {
   const [ticket,setTicket]=useState(0)
@@ -18,6 +18,7 @@ const MoreDetails = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const {getUser} =useSelector((state)=>state.Reducers)
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(GetEvents())
@@ -45,11 +46,15 @@ const MoreDetails = () => {
   }
 
   const handleModal = () => {
+    if (!isEmpty(currentUser)) {
     if(event?.AvailableTickets<=0){
       toast.error('Tickets sold out');
     }else{
     setModalIsOpen(true);
   }
+}else{
+  setLoginModalOpen(true); 
+}
 };
 
   const handleBookTicket=async()=>{
@@ -80,21 +85,45 @@ const handleTickets = (e) => {
   setTicket(numericValue > 0 ? numericValue : 0);
 }
 
+const settings = {
+  dots: true,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+  arrows: true,
+  autoplay: true,
+  autoplaySpeed: 3000,
+};
+
 
   return (
     <div className="App">
-      <Navbar />
       <section className="d-flex justify-content-center align-items-center gradient-form" style={{ height: "100vh" }}>
         <div className="container py-5">
           <div className="row justify-content-center align-items-center">
             <div className="col-md-10">
               <div className="card rounded-3 text-black">
+                
                 <div className="card-body p-md-5 mx-md-4">
                   {event ? (
                     <>
                       <div className="text-center">
                         <h4 className="mt-1 mb-5 pb-1">{event.name}</h4>
                       </div>
+                      <div className="event-image-slider pb-5">
+                   <Slider {...settings}>
+                   {event?.image?.map((image, index) => (
+                   <div key={index} className="slider-item">
+                  <img
+                     src={image.url}
+                     alt={`Event Image ${index + 1}`}
+                    style={{ width: '100%', height: '300px', objectFit: 'cover' }}
+                   />
+                  </div>
+             ))}
+           </Slider>
+            </div>
                       <p><strong>Event On :</strong> {event.date}</p>
                       <p><strong>Timings : </strong> {event.startTime} - {event.endTime}</p>
                       <p><strong>Venue : </strong>{event.venue}</p>
@@ -102,7 +131,7 @@ const handleTickets = (e) => {
                       <p><strong>Available tickets : </strong>{event?.AvailableTickets}</p>
                       <p><strong>Organizer : </strong> {event.description}</p>
                       <p><strong>Description : </strong> {event.details || 'No additional details provided.'}</p>
-                      <button className="d-flex justify-content-center btn btn-primary" onClick={handleModal} disabled={event?.AvailableTickets<=0}>Book Now</button>
+                      <button className="d-flex justify-content-center btn btn-primary" onClick={handleModal} disabled={event?.AvailableTickets<=0 ||currentUser?.role==="admin"}>Book Now</button>
                     </>
                   ) : (
                     <div className="text-center">
@@ -143,6 +172,18 @@ const handleTickets = (e) => {
                           </div>
                         </div>
                       </div>
+      </Modal>
+      <Modal isOpen={loginModalOpen} style={customStyles} onRequestClose={() => setLoginModalOpen(false)}>
+        <div className="modal-content align-items-center justify-content-center">
+          <div className="modal-body text-center">
+            <h5 className="modal-title mb-4">Login Required</h5>
+            <p>Please log in to book tickets for this event.</p>
+            <div className="modal-footer mt-3">
+              <button className="btn btn-secondary mx-2" onClick={() => setLoginModalOpen(false)}>Cancel</button>
+              <button className="btn btn-primary mx-2" onClick={() => navigate('/login')}>Login</button>
+            </div>
+          </div>
+        </div>
       </Modal>
                 
     </div>

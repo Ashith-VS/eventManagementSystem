@@ -1,10 +1,8 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
 
 const About = () => {
   return (
     <div className="App">
-      <Navbar />
       <section className="d-flex justify-content-center align-items-center gradient-form" style={{ height: "100vh" }}>
         <div className="container py-5">
           <div className="row justify-content-center align-items-center">

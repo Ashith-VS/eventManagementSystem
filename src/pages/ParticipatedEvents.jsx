@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Navbar from '../components/Navbar'
 import Modal from 'react-modal'
 import { useSelector } from 'react-redux'
 
@@ -25,7 +24,6 @@ const ParticipatedEvents = () => {
 
   return (
     <div className="App">
-    <Navbar />
     <section className="d-flex justify-content-center align-items-center gradient-form" style={{ height: "100vh" }}>
       <div className="container py-5">
         <div className="row justify-content-center align-items-center">
@@ -71,6 +69,7 @@ const ParticipatedEvents = () => {
         </div>
       </div>
     </section>
+
     <Modal isOpen={modalIsOpen} style={customStyles} onRequestClose={()=>setModalIsOpen(false)}>
                       <div className="modal-content align-items-center justify-content-center">
                         <div className="modal-body text-center m-5 ">

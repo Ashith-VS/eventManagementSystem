@@ -14,7 +14,7 @@ useEffect(() => {
 }, [])
 
 const handleEdit = (id) =>{
-    navigate(`/admin/edit-event/${id}`)
+    navigate(`/dashboard/edit-event/${id}`)
 }
 
   return (

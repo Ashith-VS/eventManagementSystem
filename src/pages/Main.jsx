@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar';
+import React, { useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetEvents } from '../redux/action/commonAction';
@@ -14,7 +13,6 @@ const {getUser} =useSelector((state)=>state.Reducers)
  
   return (
     <div className="App">
-      <Navbar />
       <section className="d-flex justify-content-center align-items-center gradient-form" >
         <div className="container py-5">
           <div className="row justify-content-center align-items-center">
@@ -30,6 +28,12 @@ const {getUser} =useSelector((state)=>state.Reducers)
                       <div key={event.id} className="col-md-3 mb-4">
                         <div className="card h-100">
                           <div className="card-body">
+                <img
+                  src={event?.image?.length > 0 ? event.image[0]?.url:'https://picsum.photos/200'}
+                  alt={event.name}
+                  className="card-img-top" 
+                  style={{ height: '200px',objectFit: 'cover',background:"black" }}
+                />
                             <h5 className="card-title">{event.name}</h5>
                             <p className="card-text">{event.description}</p>
                             <p className="card-text">

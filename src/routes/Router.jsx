@@ -10,29 +10,30 @@ import AdminDashboard from "../pages/AdminDashboard";
 import ParticipatedEvents from "../pages/ParticipatedEvents";
 import AdminAllEvents from "../pages/AdminAllEvents";
 import PrivateRoute from "../utils/PrivateRoute";
+import Navbar from "../components/Navbar";
 
 const Router = () => {
   
   return (
     <BrowserRouter>
+    <Navbar/>
       <Routes>
-        <Route path="/login" element={<Login />} />
         <Route path="/" element={<Main/>}/>
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-      
-        <Route element={<PrivateRoute  role="user"/>}>
-        <Route path="/event/:id" element={<MoreDetails/>}/>
-        <Route path="/bookedEvents" element={<ParticipatedEvents/>}/>
         <Route path="/about" element={<About/>}/>
         <Route path="/contact" element={<Contact/>}/>
+        <Route path="/event/:id" element={<MoreDetails/>}/>
+               {/* User Routes */}
+        <Route element={<PrivateRoute  role="user"/>}>
+        <Route path="/bookedEvents" element={<ParticipatedEvents/>}/>
       </Route>
-
+               {/* Admin Routes */}
        <Route element={<PrivateRoute  role="admin"/>}>
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/all-event" element={<AdminAllEvents />} />
-          <Route path="/admin/edit-event/:id" element={<AdminDashboard />} />
+          <Route path="/dashboard" element={<AdminDashboard />} />
+          <Route path="/dashboard/all-event" element={<AdminAllEvents />} />
+          <Route path="/dashboard/edit-event/:id" element={<AdminDashboard />} />
         </Route>
-        
       </Routes>
     </BrowserRouter>
   );
